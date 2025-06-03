@@ -6,11 +6,6 @@ if [ "$#" -lt 2 ]; then
     exit 1
 fi
 
-#NAMESPACE=$1
-#RESOURCE_TYPE=$2
-
-# get Kubernetes resources
-#kubectl get $RESOURCE_TYPE -n "$NAMESPACE" --no-headers -o custom-columns=NAME:.metadata.name,CPU:.spec.containers[*].resources.requests.cpu,MEMORY:.spec.containers[*].resources.requests.memory | awk '{print "Resource:", "'$RESOURCE_TYPE'", "Namespace:", "'$NAMESPACE'", "Name:", $1, "CPU:", $2, "Memory:", $3}'
 
 
 # Define command-line arguments
@@ -18,8 +13,10 @@ fi
 NAMESPACE=$1
 RESOURCE_TYPE=$2
 
+echo "Resource  Namespace    Name     CPU  Memory"
+
 # Retrieve resource usage statistics from Kubernetes
-kubectl get $RESOURCE_TYPE -n $NAMESPACE | tail -n +2 | while read line
+kubectl top $RESOURCE_TYPE -n $NAMESPACE | tail -n +2 | while read line
 do
   # Extract CPU and memory usage from the output
   NAME=$(echo $line | awk '{print $1}')
